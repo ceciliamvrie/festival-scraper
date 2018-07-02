@@ -1,0 +1,30 @@
+{
+  "name": "festival-scraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && node lib/index.js"
+  },
+  "keywords": [],
+  "author": "Rodolfo Rodriguez <mail@rodolfor.com> (http://rodolfor.com/)",
+  "license": "MIT",
+  "types": "lib/index",
+  "dependencies": {
+    "@types/events": "^1.2.0",
+    "bluebird": "^3.5.1",
+    "cheerio": "^1.0.0-rc.2",
+    "pg": "^7.4.3",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/bluebird": "^3.5.21",
+    "@types/cheerio": "^0.22.8",
+    "@types/node": "^10.5.0",
+    "@types/pg": "^7.4.10",
+    "@types/uuid": "^3.4.3",
+    "typescript": "^2.9.2"
+  }
+}
