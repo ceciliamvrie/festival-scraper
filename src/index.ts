@@ -1,5 +1,5 @@
 import { Festival, Storage, FestivalScraper } from './festival'
-import { MFWScraper } from './music-festiva-wizard'
+import { MFWScraper } from './music-festival-wizard'
 import { EventEmitter } from 'events'
 import cheerio from 'cheerio'
 import { Client } from 'pg'

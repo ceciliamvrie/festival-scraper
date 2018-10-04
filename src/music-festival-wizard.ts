@@ -10,16 +10,18 @@ export class MFWScraper extends EventEmitter {
     'https://www.musicfestivalwizard.com/festival-guide/us-festivals',
     'https://www.musicfestivalwizard.com/festival-guide/europe-festivals'
   ]
-  private timeout: Promise<null> = new Promise(res => res())
   constructor() {
     super()
   }
+
   emitFestival(festival: Festival) {
     this.emit('festival', festival)
   }
+
   emitLineup(lineup: Lineup) {
     this.emit('lineup', lineup)
   }
+
   async scrape(): Promise<Array<Festival>> {
     let promises: Array<Promise<any>> = []
 
@@ -37,6 +39,7 @@ export class MFWScraper extends EventEmitter {
 
     return Promise.all(promises.map(p => p.catch(console.log)))
   }
+
   async scrapePage(url: string): Promise<Array<Festival>>{
     let tryCount = 0
 
@@ -54,25 +57,15 @@ export class MFWScraper extends EventEmitter {
 
     return this.getFestivals($)
   }
+
+  private timeout: Promise<null> = new Promise(res => res())
+
   private getFestivals($: any): Array<Festival> {
     const festivals: Array<Festival> = []
     $('.singlefestlisting')
       .each(async (i: Number, el: any) => {
         try {
-          const name = $(el).find('.festivaltitle a').text()
-          const imgSrc = $(el).find('img').attr('src')
-          const dateStr = $(el).find('.festivaldate').text()
-          let [startDate, endDate] = dateStr
-            .split('-').map((str: string) => {
-              const date = new Date(str.includes('2018') ? str : str + ' 2018')
-              return !isNaN(date.getTime()) ? date :
-                new Date(dateStr.substring(0, dateStr.indexOf(' ') + 1) + str)
-            })
-          endDate = endDate && !isNaN(endDate.getTime()) ? endDate : startDate
-          const [city, loc] = $(el).find('.festivallocation').text().split(', ')
-          const location = loc.length === 2 ? {city, state: loc, country: 'United States'} : {city, state: '', country: loc}
-
-          const festival = new Festival(name, imgSrc, startDate, endDate, location)
+          this.getFestival($, el)
           this.emitFestival(festival)
           festivals.push(festival)
 
@@ -85,6 +78,24 @@ export class MFWScraper extends EventEmitter {
     })
     return festivals
   }
+
+  private async getFestival($: any, el: any): Festival {
+    const name = $(el).find('.festivaltitle a').text()
+    const imgSrc = $(el).find('img').attr('src')
+    const dateStr = $(el).find('.festivaldate').text()
+    let [startDate, endDate] = dateStr
+      .split('-').map((str: string) => {
+        const date = new Date(str.includes('2018') ? str : str + ' 2018')
+        return !isNaN(date.getTime()) ? date :
+          new Date(dateStr.substring(0, dateStr.indexOf(' ') + 1) + str)
+      })
+    endDate = endDate && !isNaN(endDate.getTime()) ? endDate : startDate
+    const [city, loc] = $(el).find('.festivallocation').text().split(', ')
+    const location = loc.length === 2 ? {city, state: loc, country: 'United States'} : {city, state: '', country: loc}
+
+    return Festival(name, imgSrc, startDate, endDate, location)
+  }
+
   private async scrapeLineup(festival: string, url: string): Promise<Lineup> {
     let tryCount = 0
 
